@@ -1413,6 +1413,109 @@ def support_chat():
     # В реальной реализации здесь будет логика чата с поддержкой
     return render_template('support_chat.html')
 
+@app.route('/admin')
+@login_required
+def admin():
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    # Получаем всех пользователей для отображения в админ-панели
+    users = UserModel.query.all()
+    return render_template('admin.html', users=users)
+
+@app.route('/admin_support_chat')
+@login_required
+def admin_support_chat():
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    # Заглушка для админ-чата поддержки
+    return render_template('admin_support_chat.html')
+
+@app.route('/admin/unblock_user/<int:user_id>', methods=['POST'])
+@login_required
+def admin_unblock_user(user_id):
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    user = UserModel.query.get_or_404(user_id)
+    user.is_blocked = False
+    db.session.commit()
+    flash(f'Пользователь {user.username} разблокирован.')
+    return redirect(url_for('admin'))
+
+@app.route('/admin/block_user/<int:user_id>', methods=['POST'])
+@login_required
+def admin_block_user(user_id):
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    user = UserModel.query.get_or_404(user_id)
+    user.is_blocked = True
+    db.session.commit()
+    flash(f'Пользователь {user.username} заблокирован.')
+    return redirect(url_for('admin'))
+
+@app.route('/admin/delete_user/<int:user_id>', methods=['POST'])
+@login_required
+def admin_delete_user(user_id):
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    user = UserModel.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'Пользователь {user.username} удален.')
+    return redirect(url_for('admin'))
+
+@app.route('/admin/make_admin/<int:user_id>', methods=['POST'])
+@login_required
+def admin_make_admin(user_id):
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        flash('Доступ запрещен. Требуются права администратора.')
+        return redirect(url_for('home'))
+    
+    user = UserModel.query.get_or_404(user_id)
+    user.is_admin = True
+    db.session.commit()
+    flash(f'Пользователь {user.username} теперь администратор.')
+    return redirect(url_for('admin'))
+
+@app.route('/swipe')
+@login_required
+def swipe():
+    return render_template('swipe_fresh.html')
+
+@app.route('/buy_coins')
+@login_required
+def buy_coins():
+    # Заглушка для покупки монет
+    return render_template('buy_coins.html')
+
+@app.route('/chat/<int:recipient_id>')
+@login_required
+def chat(recipient_id):
+    # Заглушка для чата с конкретным пользователем
+    recipient = UserModel.query.get_or_404(recipient_id)
+    return render_template('chat.html', recipient=recipient)
+
+@app.route('/gift_shop')
+@login_required
+def gift_shop():
+    # Заглушка для магазина подарков
+    return render_template('gift_shop.html')
+
 @app.route('/')
 def home():
     return render_template('index.html')
