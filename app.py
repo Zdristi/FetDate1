@@ -48,8 +48,8 @@ db.init_app(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'sup.fetdate@gmail.com'
-app.config['MAIL_PASSWORD'] = 'jzrxaivqpwaalodj'  # Пароль приложения Gmail
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'sup.fetdate@gmail.com')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')  # Пароль приложения Gmail
 app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
 
 # Инициализация Flask-Mail
