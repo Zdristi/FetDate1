@@ -1394,6 +1394,12 @@ def premium():
     # В реальной реализации здесь будет логика оформления премиум-подписки
     return render_template('premium.html')
 
+@app.route('/faq')
+def faq():
+    # Заглушка для страницы FAQ
+    # В реальной реализации здесь будет логика отображения часто задаваемых вопросов
+    return render_template('faq.html')
+
 @app.route('/')
 def home():
     return render_template('index.html')
