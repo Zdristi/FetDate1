@@ -1476,14 +1476,11 @@ def register():
         email = request.form['email']
         password = request.form['password']
         
-        # Проверка CAPTCHA
-        recaptcha_response = request.form.get('g-recaptcha-response')
-        if not recaptcha_response:
-            flash('Пожалуйста, подтвердите, что вы не робот.')
-            return render_template('register.html')
-        
-        # Проверка CAPTCHA через Google API (для упрощения пропустим эту часть)
-        # В реальной реализации здесь должна быть проверка через Google reCAPTCHA API
+        # Проверка CAPTCHA была отключена для локального запуска
+        # recaptcha_response = request.form.get('g-recaptcha-response')
+        # if not recaptcha_response:
+        #     flash('Пожалуйста, подтвердите, что вы не робот.')
+        #     return render_template('register.html')
         
         # Валидация email
         is_valid, message = validate_email_address(email)
