@@ -1764,8 +1764,8 @@ def login():
                     flash('Your account has been blocked')
                     return redirect(url_for('login'))
                 
-                # Log in the user
-                login_user(user)
+                # Log in the user with permanent session
+                login_user(user, remember=True)
                 return redirect(url_for('profile'))
             
             flash(get_text('invalid_credentials'))
