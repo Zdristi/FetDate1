@@ -4,9 +4,9 @@ import os
 # Enable debug mode for development
 DEBUG = False if os.environ.get('FLASK_ENV') == 'production' else True
 
-# Secret key for sessions
+# Secret key for sessions - using a fixed key for persistent sessions across restarts
 import secrets
-SECRET_KEY = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your_fixed_secret_key_for_local_development_please_change_in_production_5a7b9c3d1e2f4a6b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3')
 
 # Database configuration - changed for local development
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///fetdate_local.db')
