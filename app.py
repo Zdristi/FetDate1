@@ -1400,6 +1400,12 @@ def faq():
     # В реальной реализации здесь будет логика отображения часто задаваемых вопросов
     return render_template('faq.html')
 
+@app.route('/about')
+def about():
+    # Заглушка для страницы "О нас"
+    # В реальной реализации здесь будет логика отображения информации о проекте
+    return render_template('about.html')
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -1676,6 +1682,7 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route('/profile')
+@login_required
 def profile():
     return show_profile(current_user.id)
 
