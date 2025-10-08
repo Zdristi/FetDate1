@@ -107,20 +107,10 @@ def generate_confirmation_code():
 
 def send_confirmation_email(email, code):
     """Отправляет код подтверждения на email"""
-    try:
-        msg = EmailMessage(
-            subject='Код подтверждения регистрации - FetDate',
-            recipients=[email],
-            body=f'Ваш код подтверждения: {code}\n\nВведите этот код на сайте для завершения регистрации.'
-        )
-        mail.send(msg)
-        print(f"Письмо успешно отправлено на {email}")
-        return True
-    except Exception as e:
-        print(f"Ошибка при отправке email на {email}: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
+    # Отправка email отключена для локального запуска
+    # В продакшене необходимо настроить почтовые параметры
+    print(f"Код подтверждения для {email}: {code}")
+    return True
 
 # User loader for Flask-Login
 @login_manager.user_loader
@@ -1390,6 +1380,13 @@ def set_language(lang):
         session['language'] = lang
     return redirect(request.referrer or url_for('home'))
 
+@app.route('/chat_list')
+@login_required
+def chat_list():
+    # Заглушка для списка чатов
+    # В реальной реализации здесь будет логика получения списка чатов
+    return render_template('chat.html', users={})
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -1521,7 +1518,7 @@ def register():
             # Store the confirmation code in temporary storage
             confirmation_codes[email] = {
                 'code': confirmation_code,
-                'expires': datetime.utcnow() + timedelta(hours=1),  # Код действителен 1 час
+                'expires': datetime.now() + timedelta(hours=1),  # Код действителен 1 час
                 'user_id': user.id
             }
             
