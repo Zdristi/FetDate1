@@ -20,8 +20,12 @@ import string
 import re
 import requests
 
+# Import configuration
+from config import SECRET_KEY
+
 # Create Flask app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # Add reCAPTCHA configuration
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6Lc6BhgUAAAAAAH5u7f8rXz8rXz8rXz8rXz8rXz8'

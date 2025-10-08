@@ -5,7 +5,8 @@ import os
 DEBUG = False if os.environ.get('FLASK_ENV') == 'production' else True
 
 # Secret key for sessions
-SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-production')
+import secrets
+SECRET_KEY = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 
 # Database configuration - changed for local development
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///fetdate_local.db')
