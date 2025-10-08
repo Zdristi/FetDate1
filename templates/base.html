@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language', 'en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    
+    <!-- Favicon for different browsers and devices -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <style>
+        /* Critical CSS to prevent FOUC (Flash of Unstyled Content) */
+        :root {
+          --primary: #667eea;
+          --secondary: #764ba2;
+          --accent: #f093fb;
+          --dark: #333;
+          --gray: #666;
+          --light-gray: #f8f9fa;
+          --border-color: #dee2e6;
+          --card-bg: #ffffff;
+          --body-bg: #f8f9fa;
+          --success: #28a745;
+          --danger: #dc3545;
+          --warning: #ffc107;
+          --info: #17a2b8;
+          --text-color: #333;
+          --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        [data-theme="dark"] {
+          --primary: #667eea;
+          --secondary: #764ba2;
+          --accent: #f093fb;
+          --dark: #f8f9fa;
+          --gray: #adb5bd;
+          --light-gray: #343a40;
+          --border-color: #495057;
+          --card-bg: #212529;
+          --body-bg: #121212;
+          --success: #28a745;
+          --danger: #dc3545;
+          --warning: #ffc107;
+          --info: #17a2b8;
+          --text-color: #f8f9fa;
+          --header-bg: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background-color: var(--body-bg);
+          color: var(--dark);
+          margin: 0;
+          padding: 0;
+          line-height: 1.6;
+          transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .header {
+          background: var(--header-bg);
+          color: white;
+          padding: 1rem 0;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card {
+          background: var(--card-bg);
+          border-radius: 15px;
+          padding: 30px;
+          margin: 20px 0;
+          box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+          border: 1px solid var(--border-color);
+          transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}{{ static_version('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Immediately set theme to prevent flashing of unstyled content
+        (function() {
+            // Get saved theme from localStorage or default to light
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            // Apply theme immediately
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Set CSS variables immediately for the theme
+            if (savedTheme === 'dark') {
+                document.documentElement.style.setProperty('--body-bg', '#121212');
+                document.documentElement.style.setProperty('--card-bg', '#212529');
+                document.documentElement.style.setProperty('--text-color', '#f8f9fa');
+                document.documentElement.style.setProperty('--border-color', '#495057');
+                document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #1a1a1a, #2d2d2d)');
+                document.documentElement.style.setProperty('--primary', '#667eea');
+                document.documentElement.style.setProperty('--secondary', '#764ba2');
+                document.documentElement.style.setProperty('--accent', '#f093fb');
+                document.documentElement.style.setProperty('--dark', '#f8f9fa');
+                document.documentElement.style.setProperty('--gray', '#adb5bd');
+                document.documentElement.style.setProperty('--light-gray', '#343a40');
+                document.documentElement.style.setProperty('--success', '#28a745');
+                document.documentElement.style.setProperty('--danger', '#dc3545');
+                document.documentElement.style.setProperty('--warning', '#ffc107');
+                document.documentElement.style.setProperty('--info', '#17a2b8');
+            } else {
+                document.documentElement.style.setProperty('--body-bg', '#f8f9fa');
+                document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                document.documentElement.style.setProperty('--text-color', '#333');
+                document.documentElement.style.setProperty('--border-color', '#dee2e6');
+                document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                document.documentElement.style.setProperty('--primary', '#667eea');
+                document.documentElement.style.setProperty('--secondary', '#764ba2');
+                document.documentElement.style.setProperty('--accent', '#f093fb');
+                document.documentElement.style.setProperty('--dark', '#333');
+                document.documentElement.style.setProperty('--gray', '#666');
+                document.documentElement.style.setProperty('--light-gray', '#f8f9fa');
+                document.documentElement.style.setProperty('--success', '#28a745');
+                document.documentElement.style.setProperty('--danger', '#dc3545');
+                document.documentElement.style.setProperty('--warning', '#ffc107');
+                document.documentElement.style.setProperty('--info', '#17a2b8');
+            }
+        })();
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5418763881443021"
+         crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/swipe.css") }}">
+<body>
+    <div class="header">
+        <div class="header-content" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;">
+            <div class="logo">
+                <a href="{{ url_for('home') }}" style="display: flex; align-items: center; text-decoration: none; color: white; font-size: 1.5rem; font-weight: bold;">
+                    <i class="fas fa-heart" style="margin-right: 10px; color: #ff6b6b;"></i>
+                    FetDate
+                </a>
+            </div>
+            <div class="nav-links" style="display: flex; flex-wrap: nowrap; gap: 15px; align-items: center;">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('profile') }}">{{ get_text('profile') }}</a>
+                    <a href="{{ url_for('swipe') }}">{{ get_text('discover') }}</a>
+                    <a href="{{ url_for('chat_list') }}">{{ get_text('chat') }}</a>
+                    <a href="{{ url_for('premium') }}">Premium</a>
+                    <div class="faq-menu" style="position: relative; display: inline-block;">
+                        <a href="{{ url_for('faq') }}" class="faq-menu-link" style="text-decoration: none; color: inherit;">
+                            {{ get_text('information') or 'Information' }}
+                        </a>
+                        <div class="faq-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+                            <a href="{{ url_for('about') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('about_us') or 'About Us' }}</a>
+                            <a href="{{ url_for('faq') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('faq') or 'FAQ' }}</a>
+                            <a href="{{ url_for('support_chat') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none;">{{ get_text('support') or 'Support' }}</a>
+                        </div>
+                    </div>
+
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin') }}">Admin Panel</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}">{{ get_text('logout') }} ({{ current_user.username }})</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">{{ get_text('login') }}</a>
+                {% endif %}
+                
+                <!-- Theme Switcher -->
+                <div class="theme-switcher" style="position: relative; display: inline-block;">
+                    <button class="btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 15px; font-size: 0.9rem;" onclick="toggleTheme()">
+                        <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+                    </button>
+                </div>
+                
+                <!-- Language Switcher -->
+                <div class="language-switcher" style="position: relative; display: inline-block;">
+                    <button class="btn" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 8px 15px; font-size: 0.9rem;" onclick="toggleLanguageMenu()">
+                        <i class="fas fa-globe"></i> {{ get_text('language') }}
+                    </button>
+                    <div id="languageMenu" style="display: none; position: absolute; top: 100%; right: 0; background: var(--card-bg); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+                        <a href="{{ url_for('set_language', lang='en') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('english') }}</a>
+                        <a href="{{ url_for('set_language', lang='ru') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none;">{{ get_text('russian') }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="background-color: #ffeb3b; padding: 15px; border-radius: 10px; margin: 20px 0; color: #333;">
+                        <i class="fas fa-info-circle"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <script>
+        // Theme switching with animation
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            // Add transition class for smooth theme change
+            htmlElement.classList.add('theme-transition');
+            
+            if (htmlElement.getAttribute('data-theme') === 'dark') {
+                // Switch to light theme
+                htmlElement.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon theme-icon';
+                
+                // Update CSS variables for light theme
+                document.documentElement.style.setProperty('--body-bg', '#f8f9fa');
+                document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                document.documentElement.style.setProperty('--text-color', '#333');
+                document.documentElement.style.setProperty('--border-color', '#dee2e6');
+                document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                document.documentElement.style.setProperty('--primary', '#667eea');
+                document.documentElement.style.setProperty('--secondary', '#764ba2');
+                document.documentElement.style.setProperty('--accent', '#f093fb');
+                document.documentElement.style.setProperty('--dark', '#333');
+                document.documentElement.style.setProperty('--gray', '#666');
+                document.documentElement.style.setProperty('--light-gray', '#f8f9fa');
+                document.documentElement.style.setProperty('--success', '#28a745');
+                document.documentElement.style.setProperty('--danger', '#dc3545');
+                document.documentElement.style.setProperty('--warning', '#ffc107');
+                document.documentElement.style.setProperty('--info', '#17a2b8');
+                
+                // Save theme preference
+                localStorage.setItem('theme', 'light');
+            } else {
+                // Switch to dark theme
+                htmlElement.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun theme-icon';
+                
+                // Update CSS variables for dark theme
+                document.documentElement.style.setProperty('--body-bg', '#121212');
+                document.documentElement.style.setProperty('--card-bg', '#212529');
+                document.documentElement.style.setProperty('--text-color', '#f8f9fa');
+                document.documentElement.style.setProperty('--border-color', '#495057');
+                document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #1a1a1a, #2d2d2d)');
+                document.documentElement.style.setProperty('--primary', '#667eea');
+                document.documentElement.style.setProperty('--secondary', '#764ba2');
+                document.documentElement.style.setProperty('--accent', '#f093fb');
+                document.documentElement.style.setProperty('--dark', '#f8f9fa');
+                document.documentElement.style.setProperty('--gray', '#adb5bd');
+                document.documentElement.style.setProperty('--light-gray', '#343a40');
+                document.documentElement.style.setProperty('--success', '#28a745');
+                document.documentElement.style.setProperty('--danger', '#dc3545');
+                document.documentElement.style.setProperty('--warning', '#ffc107');
+                document.documentElement.style.setProperty('--info', '#17a2b8');
+                
+                // Save theme preference
+                localStorage.setItem('theme', 'dark');
+            }
+            
+            // Remove transition class after animation completes
+            setTimeout(() => {
+                htmlElement.classList.remove('theme-transition');
+            }, 300);
+        }
+        
+        // Language menu toggle
+        function toggleLanguageMenu() {
+            const menu = document.getElementById('languageMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Close language menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const languageSwitcher = document.querySelector('.language-switcher');
+            const menu = document.getElementById('languageMenu');
+            
+            if (menu && languageSwitcher && !languageSwitcher.contains(event.target)) {
+                menu.style.display = 'none';
+            }
+        });
+        
+        // Close language menu when pressing Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const menu = document.getElementById('languageMenu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+        
+        // Notifications dropdown with animation
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                
+                // Add animation
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.opacity = '0';
+                    dropdown.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        dropdown.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        dropdown.style.opacity = '1';
+                        dropdown.style.transform = 'translateY(0)';
+                    }, 10);
+                }
+            }
+        }
+        
+        // Close notifications dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const notificationDropdown = document.querySelector('.notification-dropdown');
+            const dropdown = document.getElementById('notificationDropdown');
+            
+            if (dropdown && notificationDropdown && !notificationDropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        // Close notifications dropdown when pressing Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const dropdown = document.getElementById('notificationDropdown');
+                if (dropdown) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        });
+        
+        // FAQ menu dropdown
+        const faqMenu = document.querySelector('.faq-menu');
+        const faqDropdown = document.querySelector('.faq-dropdown');
+        
+        if (faqMenu && faqDropdown) {
+            // Show dropdown on hover
+            faqMenu.addEventListener('mouseenter', function() {
+                faqDropdown.style.display = 'block';
+            });
+            
+            // Hide dropdown when leaving menu
+            faqMenu.addEventListener('mouseleave', function() {
+                faqDropdown.style.display = 'none';
+            });
+            
+            // Also show dropdown when clicking on FAQ link on mobile
+            const faqLink = document.querySelector('.faq-menu-link');
+            let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints;
+            
+            if (isTouchDevice) {
+                faqLink.addEventListener('click', function(e) {
+                    if (faqDropdown.style.display === 'block') {
+                        faqDropdown.style.display = 'none';
+                    } else {
+                        faqDropdown.style.display = 'block';
+                    }
+                    e.preventDefault();
+                });
+            }
+        }
+        
+        // Mark all notifications as read
+        function markAllNotificationsAsRead() {
+            fetch('/api/mark_all_notifications_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // Hide notification count
+                    const countElement = document.getElementById('notification-count');
+                    if (countElement) {
+                        countElement.style.display = 'none';
+                    }
+                    
+                    // Update notification list
+                    loadNotifications();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Load notifications
+        function loadNotifications() {
+            fetch('/api/notifications')
+            .then(response => response.json())
+            .then(data => {
+                const notificationsList = document.getElementById('notifications-list');
+                const countElement = document.getElementById('notification-count');
+                const markAllReadBtn = document.getElementById('mark-all-read-btn');
+                
+                if (notificationsList && data.length > 0) {
+                    notificationsList.innerHTML = '';
+                    
+                    // Show notification count
+                    if (countElement) {
+                        const unreadCount = data.filter(n => !n.is_read).length;
+                        if (unreadCount > 0) {
+                            countElement.textContent = unreadCount;
+                            countElement.style.display = 'flex';
+                        } else {
+                            countElement.style.display = 'none';
+                        }
+                    }
+                    
+                    // Show mark all read button if there are unread notifications
+                    if (markAllReadBtn) {
+                        const hasUnread = data.some(n => !n.is_read);
+                        markAllReadBtn.style.display = hasUnread ? 'inline-block' : 'none';
+                    }
+                    
+                    // Add notifications to list
+                    data.forEach(notification => {
+                        const notificationElement = document.createElement('div');
+                        notificationElement.className = 'notification-item';
+                        notificationElement.style.padding = '15px';
+                        notificationElement.style.borderBottom = '1px solid var(--border-color)';
+                        
+                        if (!notification.is_read) {
+                            notificationElement.style.background = 'rgba(102, 126, 234, 0.1)';
+                        }
+                        
+                        notificationElement.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0; font-size: 1.1rem;">${notification.title}</h4>
+                                <span style="font-size: 0.8rem; color: var(--gray);">${new Date(notification.timestamp).toLocaleDateString()}</span>
+                            </div>
+                            <p style="margin: 0 0 15px 0; color: var(--text-color);">${notification.content}</p>
+                            ${notification.url ? `<a href="${notification.url}" class="btn btn-sm" style="padding: 5px 10px; font-size: 0.8rem;">View</a>` : ''}
+                        `;
+                        
+                        notificationsList.appendChild(notificationElement);
+                    });
+                } else if (notificationsList) {
+                    // No notifications
+                    notificationsList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">No notifications yet</div>';
+                    
+                    if (countElement) {
+                        countElement.style.display = 'none';
+                    }
+                    
+                    if (markAllReadBtn) {
+                        markAllReadBtn.style.display = 'none';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Load notifications when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply saved theme on page load
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                const htmlElement = document.documentElement;
+                const themeIcon = document.getElementById('themeIcon');
+                
+                htmlElement.setAttribute('data-theme', savedTheme);
+                
+                if (savedTheme === 'dark') {
+                    themeIcon.className = 'fas fa-sun theme-icon';
+                    
+                    // Apply dark theme CSS variables
+                    document.documentElement.style.setProperty('--body-bg', '#121212');
+                    document.documentElement.style.setProperty('--card-bg', '#212529');
+                    document.documentElement.style.setProperty('--text-color', '#f8f9fa');
+                    document.documentElement.style.setProperty('--border-color', '#495057');
+                    document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #1a1a1a, #2d2d2d)');
+                    document.documentElement.style.setProperty('--primary', '#667eea');
+                    document.documentElement.style.setProperty('--secondary', '#764ba2');
+                    document.documentElement.style.setProperty('--accent', '#f093fb');
+                    document.documentElement.style.setProperty('--dark', '#f8f9fa');
+                    document.documentElement.style.setProperty('--gray', '#adb5bd');
+                    document.documentElement.style.setProperty('--light-gray', '#343a40');
+                    document.documentElement.style.setProperty('--success', '#28a745');
+                    document.documentElement.style.setProperty('--danger', '#dc3545');
+                    document.documentElement.style.setProperty('--warning', '#ffc107');
+                    document.documentElement.style.setProperty('--info', '#17a2b8');
+                } else {
+                    themeIcon.className = 'fas fa-moon theme-icon';
+                    
+                    // Apply light theme CSS variables
+                    document.documentElement.style.setProperty('--body-bg', '#f8f9fa');
+                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--text-color', '#333');
+                    document.documentElement.style.setProperty('--border-color', '#dee2e6');
+                    document.documentElement.style.setProperty('--header-bg', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+                    document.documentElement.style.setProperty('--primary', '#667eea');
+                    document.documentElement.style.setProperty('--secondary', '#764ba2');
+                    document.documentElement.style.setProperty('--accent', '#f093fb');
+                    document.documentElement.style.setProperty('--dark', '#333');
+                    document.documentElement.style.setProperty('--gray', '#666');
+                    document.documentElement.style.setProperty('--light-gray', '#f8f9fa');
+                    document.documentElement.style.setProperty('--success', '#28a745');
+                    document.documentElement.style.setProperty('--danger', '#dc3545');
+                    document.documentElement.style.setProperty('--warning', '#ffc107');
+                    document.documentElement.style.setProperty('--info', '#17a2b8');
+                }
+            }
+            
+            loadNotifications();
+        });
+        
+        // Periodically check for new notifications (every 30 seconds)
+        setInterval(() => {
+            if (document.hidden === false) {
+                loadNotifications();
+            }
+        }, 30000);
+    </script>
+    
+    <style>
+        [data-theme="dark"] .welcome-back {
+            color: white !important;
+        }
+        
+        [data-theme="dark"] .section-title-text {
+            color: white !important;
+        }
+        
+        /* Full dark theme styles */
+        [data-theme="dark"] {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #f8f9fa;
+            --gray: #adb5bd;
+            --light-gray: #343a40;
+            --border-color: #495057;
+            --card-bg: #212529;
+            --body-bg: #121212;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --text-color: #f8f9fa;
+            --header-bg: #1a1a1a;
+        }
+        
+        [data-theme="dark"] body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .header {
+            background: linear-gradient(135deg, var(--header-bg), #2d2d2d);
+        }
+        
+        [data-theme="dark"] .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+        
+        [data-theme="dark"] .card-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        [data-theme="dark"] .form-control {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        [data-theme="dark"] .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        [data-theme="dark"] .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        [data-theme="dark"] .nav-links a {
+            color: white;
+        }
+        
+        [data-theme="dark"] .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        [data-theme="dark"] .alert-success {
+            background: #155724;
+            color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        [data-theme="dark"] .alert-danger {
+            background: #721c24;
+            color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Styling for fetish and interest buttons */
+        .fetish-btn, .interest-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .fetish-btn:hover, .interest-btn:hover {
+            background-color: var(--bg-color);
+            border-color: var(--primary);
+        }
+        
+        .fetish-btn.selected, .interest-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        [data-theme="dark"] .fetish-btn.selected, [data-theme="dark"] .interest-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .fetish-item, .interest-item {
+            display: inline-block;
+            margin: 0;
+        }
+        
+        .fetish-item input[type="checkbox"], .interest-item input[type="checkbox"] {
+            display: none;
+        }
+        
+        /* Add our custom styles for the improved homepage */
+        /* Default CSS variables for light theme */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #333;
+            --gray: #666;
+            --light-gray: #f8f9fa;
+            --border-color: #dee2e6;
+            --card-bg: #ffffff;
+            --body-bg: #f8f9fa;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --text-color: #333;
+            --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Dark theme CSS variables */
+        [data-theme="dark"] {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #f8f9fa;
+            --gray: #adb5bd;
+            --light-gray: #343a40;
+            --border-color: #495057;
+            --card-bg: #212529;
+            --body-bg: #121212;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --text-color: #f8f9fa;
+            --header-bg: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+            --border-color: #495057;
+            --card-bg: #212529;
+            --body-bg: #121212;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .badge-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .badge-accent {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Add animation for buttons */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header {
+                text-align: center;
+            }
+        }
+
+        /* Add smooth transitions */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Add hover effects for cards */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Theme transition */
+        .theme-transition {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Dark theme styles */
+        [data-theme="dark"] {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #f8f9fa;
+            --gray: #adb5bd;
+            --light-gray: #343a40;
+            --border-color: #495057;
+            --card-bg: #212529;
+            --body-bg: #121212;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --text-color: #f8f9fa;
+            --header-bg: #1a1a1a;
+        }
+        
+        [data-theme="dark"] body {
+            background-color: var(--body-bg);
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .header {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+        }
+        
+        [data-theme="dark"] .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+        }
+        
+        [data-theme="dark"] .card-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        [data-theme="dark"] .form-control {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        
+        [data-theme="dark"] .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        [data-theme="dark"] .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        [data-theme="dark"] .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+        
+        [data-theme="dark"] .nav-links a {
+            color: white;
+        }
+        
+        [data-theme="dark"] .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        [data-theme="dark"] .alert-success {
+            background: #155724;
+            color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        
+        [data-theme="dark"] .alert-danger {
+            background: #721c24;
+            color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+        
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+        }
+        
+        [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Language switcher dropdown styles */
+        #languageMenu a {
+            color: var(--text-color) !important;
+        }
+        
+        [data-theme="light"] #languageMenu a {
+            color: var(--text-color) !important;
+        }
+        
+        [data-theme="light"] #languageMenu {
+            background: var(--card-bg) !important;
+        }
+        
+        #languageMenu a:hover {
+            background-color: var(--light-gray);
+        }
+        
+        /* FAQ menu dropdown styles */
+        .faq-dropdown a {
+            color: var(--text-color) !important;
+        }
+        
+        [data-theme="light"] .faq-dropdown a {
+            color: var(--text-color) !important;
+        }
+        
+        [data-theme="light"] .faq-dropdown {
+            background: var(--card-bg) !important;
+        }
+        
+        .faq-dropdown a:hover {
+            background-color: var(--light-gray);
+        }
+    </style>
+</body>
+</html>

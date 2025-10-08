@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+    <!-- For logged in users, show swipe interface -->
+    <div style="text-align: center; max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <h1 style="font-size: 2.8rem; margin-bottom: 25px; color: var(--dark); font-weight: 700;" class="welcome-back">
+            {{ get_text('welcome_back') }}, {{ current_user.username }}!
+        </h1>
+        <p style="font-size: 1.3rem; color: var(--gray); margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+            {{ get_text('discover_matches') }}
+        </p>
+        
+        <!-- Hero section with background image -->
+        <div style="position: relative; margin: 40px 0; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white;">
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 20px; font-weight: 700;">
+                        <i class="fas fa-heart"></i> {{ get_text('ready_to_find_love') }}
+                    </h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                        {{ get_text('discover_new_connections') }}
+                    </p>
+                    
+                    <!-- Large centered button -->
+                    <div style="margin: 40px 0;">
+                        <a href="{{ url_for('swipe') }}" class="btn" style="font-size: 1.4rem; padding: 20px 50px; background: white; color: #667eea; border: none; border-radius: 50px; font-weight: 700; box-shadow: 0 5px 20px rgba(0,0,0,0.2); transition: all 0.3s ease; display: inline-block;">
+                            <i class="fas fa-fire"></i> {{ get_text('swipe_now') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features section -->
+        <div style="margin: 60px 0;">
+            <h2 style="font-size: 2rem; margin-bottom: 40px; color: var(--dark);">{{ get_text('why_choose_us') }}</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 40px;">
+                <div class="card" style="padding: 30px; text-align: center; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease;">
+                    <div style="font-size: 3rem; margin-bottom: 20px; color: var(--primary);">🔒</div>
+                    <h3 style="margin-bottom: 15px; color: var(--dark);">{{ get_text('safe_and_secure') }}</h3>
+                    <p style="color: var(--gray);">{{ get_text('privacy_protection') }}</p>
+                </div>
+                
+                <div class="card" style="padding: 30px; text-align: center; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease;">
+                    <div style="font-size: 3rem; margin-bottom: 20px; color: var(--accent);">🌟</div>
+                    <h3 style="margin-bottom: 15px; color: var(--dark);">{{ get_text('verified_profiles') }}</h3>
+                    <p style="color: var(--gray);">{{ get_text('authentic_people') }}</p>
+                </div>
+                
+                <div class="card" style="padding: 30px; text-align: center; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: transform 0.3s ease;">
+                    <div style="font-size: 3rem; margin-bottom: 20px; color: var(--secondary);">⚡</div>
+                    <h3 style="margin-bottom: 15px; color: var(--dark);">{{ get_text('instant_matching') }}</h3>
+                    <p style="color: var(--gray);">{{ get_text('real_time_connect') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <!-- For guests, show landing page -->
+    <div style="text-align: center; max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <div style="margin-bottom: 50px;">
+            <h1 style="font-size: 3.5rem; margin-bottom: 25px; color: var(--dark); font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                {{ get_text('find_match') }}
+            </h1>
+            <p style="font-size: 1.4rem; color: var(--gray); margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                {{ get_text('description') }}
+            </p>
+        </div>
+        
+        <!-- Hero section with background image -->
+        <div style="position: relative; margin: 40px 0; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.2);">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 80px 40px; color: white;">
+                <div style="max-width: 700px; margin: 0 auto;">
+                    <h2 style="font-size: 2.8rem; margin-bottom: 25px; font-weight: 700;">
+                        <i class="fas fa-heart"></i> {{ get_text('join_our_community') }}
+                    </h2>
+                    <p style="font-size: 1.3rem; margin-bottom: 40px; opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        {{ get_text('find_your_perfect_match') }}
+                    </p>
+                    
+                    <!-- Large centered button -->
+                    <div style="margin: 40px 0;">
+                        <a href="{{ url_for('register') }}" class="btn" style="font-size: 1.5rem; padding: 22px 60px; background: white; color: #667eea; border: none; border-radius: 50px; font-weight: 700; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+                            <i class="fas fa-user-plus"></i> {{ get_text('get_started') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features section -->
+        <div style="margin: 80px 0;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 50px; color: var(--dark);">{{ get_text('how_it_works') or 'How It Works' }}</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-bottom: 60px;">
+                <div class="card" style="padding: 40px; text-align: center; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease; background: var(--card-bg);">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 2rem; font-weight: bold;">
+                        1
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 20px; color: var(--dark);">{{ get_text('step1') }}</h3>
+                    <p style="color: var(--gray); font-size: 1.1rem;">{{ get_text('step1_desc') }}</p>
+                </div>
+                
+                <div class="card" style="padding: 40px; text-align: center; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease; background: var(--card-bg);">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--accent), var(--primary)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 2rem; font-weight: bold;">
+                        2
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 20px; color: var(--dark);">{{ get_text('step2') }}</h3>
+                    <p style="color: var(--gray); font-size: 1.1rem;">{{ get_text('step2_desc') }}</p>
+                </div>
+                
+                <div class="card" style="padding: 40px; text-align: center; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: transform 0.3s ease; background: var(--card-bg);">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--secondary), var(--accent)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; font-size: 2rem; font-weight: bold;">
+                        3
+                    </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 20px; color: var(--dark);">{{ get_text('step3') }}</h3>
+                    <p style="color: var(--gray); font-size: 1.1rem;">{{ get_text('step3_desc') }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics section -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; border-radius: 20px; margin: 60px 0; color: white;">
+            <h2 style="font-size: 2.2rem; margin-bottom: 40px; text-align: center;">{{ get_text('join_thousands') }}</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: center;">
+                <div>
+                    <div style="font-size: 3rem; font-weight: bold; margin-bottom: 10px;">10K+</div>
+                    <div style="font-size: 1.2rem; opacity: 0.9;">{{ get_text('active_users') }}</div>
+                </div>
+                
+                <div>
+                    <div style="font-size: 3rem; font-weight: bold; margin-bottom: 10px;">50K+</div>
+                    <div style="font-size: 1.2rem; opacity: 0.9;">{{ get_text('successful_matches') }}</div>
+                </div>
+                
+                <div>
+                    <div style="font-size: 3rem; font-weight: bold; margin-bottom: 10px;">98%</div>
+                    <div style="font-size: 1.2rem; opacity: 0.9;">{{ get_text('satisfaction_rate') }}</div>
+                </div>
+                
+                <div>
+                    <div style="font-size: 3rem; font-weight: bold; margin-bottom: 10px;">24/7</div>
+                    <div style="font-size: 1.2rem; opacity: 0.9;">{{ get_text('customer_support') or 'Customer Support' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
