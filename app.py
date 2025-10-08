@@ -1387,6 +1387,13 @@ def chat_list():
     # В реальной реализации здесь будет логика получения списка чатов
     return render_template('chat.html', users={})
 
+@app.route('/premium')
+@login_required
+def premium():
+    # Заглушка для страницы премиум-подписки
+    # В реальной реализации здесь будет логика оформления премиум-подписки
+    return render_template('premium.html')
+
 @app.route('/')
 def home():
     return render_template('index.html')
