@@ -1,304 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}{{ get_text('admin_support_chat') or 'Admin Support Chat' }} - {{ SITE_NAME }}{% endblock %}
+{% block title %}Admin Support Chat{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h2 class="card-title">
-            <i class="fas fa-headset"></i> {{ get_text('admin_support_chat') or 'Admin Support Chat' }}
-        </h2>
-    </div>
+<div class="container">
+    <h1>{{ get_text('admin_support_chat') }}</h1>
     
-    <div style="margin-bottom: 20px;">
-        <a href="{{ url_for('admin') }}" class="btn btn-outline">
-            <i class="fas fa-arrow-left"></i> {{ get_text('back_to_admin_panel') or 'Back to Admin Panel' }}
-        </a>
-    </div>
+    <a href="{{ url_for('admin') }}" class="btn btn-outline">
+        {{ get_text('back_to_admin_panel') }}
+    </a>
     
-    <div style="display: flex; gap: 20px; height: 600px;">
-        <!-- Users list -->
-        <div style="flex: 0 0 300px; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column;">
-            <div style="background: var(--card-bg); padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold;">
-                {{ get_text('support_tickets') or 'Support Tickets' }}
-            </div>
-            <div id="ticketsList" style="flex: 1; overflow-y: auto; background: var(--card-bg);">
-                <div style="padding: 20px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> {{ get_text("loading") or "Loading..." }}</div>
+    <div id="admin-support-chat-container">
+        <div class="support-users">
+            <h3>{{ get_text('users') }}</h3>
+            <div class="user-list">
+                <p>{{ get_text('select_user_to_begin_chat') }}</p>
+                <!-- Заглушка списка пользователей -->
             </div>
         </div>
         
-        <!-- Chat area -->
-        <div style="flex: 1; display: flex; flex-direction: column; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden;">
-            <div id="chatHeader" style="background: var(--card-bg); padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold;">
-                {{ get_text('select_ticket_to_chat') or 'Select a ticket to start chatting' }}
+        <div class="chat-area">
+            <div id="admin-messages">
+                <p>{{ get_text('select_user_to_chat') }}</p>
             </div>
             
-            <div id="chatMessages" style="flex: 1; padding: 20px; overflow-y: auto; background: var(--card-bg);">
-                <div style="text-align: center; color: var(--gray); padding: 20px;">
-                    <i class="fas fa-comments" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.3;"></i>
-                    <p>{{ get_text('select_ticket_to_begin_chat') or 'Select a ticket from the list to begin chatting' }}</p>
-                </div>
-            </div>
-            
-            <div id="chatInputArea" style="padding: 15px; border-top: 1px solid var(--border-color); background: var(--body-bg); display: none;">
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="messageInput" placeholder="{{ get_text('type_your_message') or 'Type your message...' }}" 
-                           style="flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 25px; background: var(--card-bg); color: var(--text-color);" />
-                    <button id="sendMessageBtn" class="btn" style="padding: 12px 20px; border-radius: 25px;">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+            <div id="admin-input-container">
+                <textarea id="admin-message-input" placeholder="{{ get_text('type_your_message') }}"></textarea>
+                <button id="admin-send-button">{{ get_text('send_message') }}</button>
             </div>
         </div>
     </div>
 </div>
-
-<script>
-// Global variables
-let selectedTicketId = null;
-
-// Initialize admin chat
-document.addEventListener('DOMContentLoaded', function() {
-    loadTickets();
-    
-    // Set up event listeners
-    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
-    document.getElementById('messageInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    });
-});
-
-// Load tickets list
-function loadTickets() {
-    const ticketsList = document.getElementById('ticketsList');
-    ticketsList.innerHTML = '<div style="padding: 20px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> {{ get_text("loading") or "Loading..." }}</div>';
-    
-    fetch('/api/admin/support/tickets')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.status === 'success') {
-            displayTickets(data.tickets);
-        } else {
-            ticketsList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">{{ get_text("error_loading_tickets") or "Error loading tickets: " }} ' + (data.message || '') + '</div>';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        ticketsList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">{{ get_text("error_loading_tickets") or "Error loading tickets" }}: ' + error.message + '</div>';
-    });
-}
-
-// Display tickets in the sidebar
-function displayTickets(tickets) {
-    const ticketsList = document.getElementById('ticketsList');
-    ticketsList.innerHTML = '';
-    
-    if (tickets.length === 0) {
-        ticketsList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">{{ get_text("no_tickets_found") or "No tickets found" }}</div>';
-        return;
-    }
-    
-    tickets.forEach(ticket => {
-        const ticketElement = document.createElement('div');
-        ticketElement.className = 'ticket-item';
-        ticketElement.style.padding = '15px';
-        ticketElement.style.borderBottom = '1px solid var(--border-color)';
-        ticketElement.style.cursor = 'pointer';
-        ticketElement.style.display = 'flex';
-        ticketElement.style.justifyContent = 'space-between';
-        ticketElement.style.alignItems = 'center';
-        ticketElement.style.transition = 'background 0.2s';
-        
-        if (selectedTicketId === ticket.id) {
-            ticketElement.style.background = 'var(--primary)';
-            ticketElement.style.color = 'white';
-        }
-        
-        // Format timestamp
-        const date = new Date(ticket.created_at);
-        const timeString = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        ticketElement.innerHTML = `
-            <div style="flex: 1;">
-                <div style="font-weight: bold; display: flex; justify-content: space-between;">
-                    <span>${ticket.user.username}</span>
-                    <span style="font-weight: normal; font-size: 0.8rem;">${timeString}</span>
-                </div>
-                <div style="font-size: 0.9rem; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;">${ticket.subject}</div>
-                <div style="font-size: 0.8rem; margin-top: 5px;">
-                    <span class="badge" style="background: ${ticket.status === 'open' ? 'var(--success)' : ticket.status === 'replied' ? 'var(--primary)' : 'var(--gray)'}; font-size: 0.7rem;">
-                        ${ticket.status}
-                    </span>
-                </div>
-            </div>
-        `;
-        
-        ticketElement.addEventListener('click', () => {
-            selectTicket(ticket);
-        });
-        
-        ticketsList.appendChild(ticketElement);
-    });
-}
-
-// Select a ticket to chat with
-function selectTicket(ticket) {
-    selectedTicketId = ticket.id;
-    
-    // Update chat header
-    document.getElementById('chatHeader').innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
-                ${ticket.user.username.charAt(0).toUpperCase()}
-            </div>
-            <div>
-                <div style="font-weight: bold;">${ticket.user.username}</div>
-                <div style="font-size: 0.9rem; opacity: 0.8;">${ticket.subject}</div>
-            </div>
-        </div>
-    `;
-    
-    // Show chat input
-    document.getElementById('chatInputArea').style.display = 'block';
-    
-    // Load chat history for this ticket
-    loadChatHistory(ticket.id);
-    
-    // Refresh tickets list to update selection
-    loadTickets();
-}
-
-// Load chat history for a ticket
-function loadChatHistory(ticketId) {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = '<div style="padding: 20px; text-align: center;"><i class="fas fa-spinner fa-spin"></i> {{ get_text("loading_chat_history") or "Loading chat history..." }}</div>';
-    
-    fetch(`/api/admin/support/ticket/${ticketId}/messages`)
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            displayChatHistory(data.messages);
-        } else {
-            chatMessages.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">{{ get_text("error_loading_messages") or "Error loading messages" }}</div>';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        chatMessages.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--gray);">{{ get_text("error_loading_messages") or "Error loading messages" }}</div>';
-    });
-}
-
-// Display chat history
-function displayChatHistory(messages) {
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = '';
-    
-    if (messages.length === 0) {
-        chatMessages.innerHTML = '<div style="text-align: center; color: var(--gray); padding: 20px;">{{ get_text("no_messages_yet") or "No messages yet" }}</div>';
-        return;
-    }
-    
-    messages.forEach(message => {
-        addMessageToChat(message.content, message.is_admin, new Date(message.timestamp));
-    });
-    
-    // Scroll to bottom
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Add a message to the chat display
-function addMessageToChat(content, isAdmin, timestamp) {
-    const chatMessages = document.getElementById('chatMessages');
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.style.marginBottom = '15px';
-    messageDiv.style.display = 'flex';
-    messageDiv.style.flexDirection = isAdmin ? 'row-reverse' : 'row';
-    
-    const messageContent = document.createElement('div');
-    messageContent.style.maxWidth = '70%';
-    messageContent.style.padding = '12px 15px';
-    messageContent.style.borderRadius = '18px';
-    messageContent.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-    
-    if (isAdmin) {
-        messageContent.style.background = 'var(--primary)';
-        messageContent.style.color = 'white';
-        messageContent.style.borderBottomRightRadius = '5px';
-    } else {
-        messageContent.style.background = 'var(--card-bg)';
-        messageContent.style.border = '1px solid var(--border-color)';
-        messageContent.style.borderBottomLeftRadius = '5px';
-    }
-    
-    messageContent.textContent = content;
-    
-    const timeDiv = document.createElement('div');
-    timeDiv.style.fontSize = '0.7rem';
-    timeDiv.style.color = 'var(--gray)';
-    timeDiv.style.marginTop = '5px';
-    timeDiv.style.textAlign = isAdmin ? 'right' : 'left';
-    timeDiv.textContent = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    
-    const messageWrapper = document.createElement('div');
-    messageWrapper.style.width = '100%';
-    messageWrapper.appendChild(messageContent);
-    messageWrapper.appendChild(timeDiv);
-    
-    messageDiv.appendChild(messageWrapper);
-    chatMessages.appendChild(messageDiv);
-    
-    // Scroll to bottom
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Send a message
-function sendMessage() {
-    const messageInput = document.getElementById('messageInput');
-    const content = messageInput.value.trim();
-    
-    if (content && selectedTicketId) {
-        // Add message to chat display immediately
-        addMessageToChat(content, true, new Date());
-        
-        // Clear input
-        messageInput.value = '';
-        
-        // Send message to server
-        fetch('/api/admin/support/send_message', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ticket_id: selectedTicketId,
-                content: content
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Message sent successfully
-                console.log('Message sent successfully');
-                // Reload chat history to show the new message
-                loadChatHistory(selectedTicketId);
-            } else {
-                // Error sending message
-                addMessageToChat('{{ get_text("error_sending_message") or "Error sending message. Please try again." }}', true, new Date());
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            addMessageToChat('{{ get_text("error_sending_message") or "Error sending message. Please try again." }}', true, new Date());
-        });
-    }
-}
-</script>
 {% endblock %}
