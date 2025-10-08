@@ -1385,7 +1385,9 @@ def set_language(lang):
 def chat_list():
     # Заглушка для списка чатов
     # В реальной реализации здесь будет логика получения списка чатов
-    return render_template('chat.html', users={})
+    # Для шаблона chat.html нам нужно передать recipient, но для списка чатов нужен другой шаблон
+    # Создадим пользовательский шаблон для списка чатов
+    return render_template('chat_list.html')
 
 @app.route('/premium')
 @login_required
