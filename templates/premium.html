@@ -1,25 +1,374 @@
 {% extends "base.html" %}
 
-{% block title %}Premium Membership{% endblock %}
+{% block title %}{{ get_text('premium_membership') }}{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>{{ get_text('premium_membership') }}</h1>
-    <p>{{ get_text('unlock_exclusive_features') }}</p>
-    
-    <div class="premium-features">
-        <h2>{{ get_text('premium_features') }}</h2>
-        <ul>
-            <li>{{ get_text('undo_swipes') }} - {{ get_text('undo_swipes_desc') }}</li>
-            <li>{{ get_text('unlimited_messaging') }} - {{ get_text('unlimited_messaging_desc') }}</li>
-            <li>{{ get_text('premium_badge') }} - {{ get_text('premium_badge_desc') }}</li>
-        </ul>
+<div class="premium-container">
+    <div class="premium-header">
+        <h1><i class="fas fa-crown"></i> {{ get_text('premium_membership') }}</h1>
+        <p>{{ get_text('unlock_exclusive_features') }}</p>
     </div>
     
-    <div class="pricing">
-        <h3>{{ get_text('just_per_month') }}</h3>
-        <p>{{ get_text('cancel_anytime') }}</p>
-        <button class="btn btn-primary">{{ get_text('upgrade_to_premium') }}</button>
+    <div class="premium-features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-undo"></i>
+            </div>
+            <h3>{{ get_text('undo_swipes') }}</h3>
+            <p>{{ get_text('undo_swipes_desc') }}</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3>{{ get_text('unlimited_messaging') }}</h3>
+            <p>{{ get_text('unlimited_messaging_desc') }}</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <h3>{{ get_text('premium_badge') }}</h3>
+            <p>{{ get_text('premium_badge_desc') }}</p>
+        </div>
+    </div>
+    
+    <div class="premium-pricing">
+        <div class="pricing-card">
+            <h2 class="pricing-title">{{ get_text('premium') }}</h2>
+            <div class="pricing-price">
+                <span class="price-amount">$9.99</span>
+                <span class="price-period">/ {{ get_text('month') or 'month' }}</span>
+            </div>
+            <p class="pricing-subtitle">{{ get_text('cancel_anytime') }}</p>
+            
+            <ul class="pricing-features">
+                <li><i class="fas fa-check-circle"></i> {{ get_text('undo_swipes') }}</li>
+                <li><i class="fas fa-check-circle"></i> {{ get_text('unlimited_messaging') }}</li>
+                <li><i class="fas fa-check-circle"></i> {{ get_text('premium_badge') }}</li>
+                <li><i class="fas fa-check-circle"></i> Priority matching</li>
+                <li><i class="fas fa-check-circle"></i> Advanced filters</li>
+                <li><i class="fas fa-check-circle"></i> Extended profile visibility</li>
+            </ul>
+            
+            <button class="btn btn-primary btn-premium">
+                {{ get_text('get_premium_now') }}
+            </button>
+            
+            <p class="pricing-note">
+                <i class="fas fa-lock"></i> {{ get_text('by_subscribing') }}
+            </p>
+        </div>
+        
+        {% if current_user.is_premium %}
+        <div class="premium-status">
+            <div class="status-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>{{ get_text('already_premium_member') }}</h3>
+            <p>{{ get_text('expires') }}: {{ current_user.premium_expires.strftime('%Y-%m-%d') if current_user.premium_expires else 'Never' }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="premium-testimonials">
+        <h2>Why Users Love Premium</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"Premium features helped me connect with more people who share my interests. The unlimited messaging is a game-changer!"</p>
+                <div class="testimonial-author">- Alex M.</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"The ability to undo swipes has saved me from accidentally passing on potential matches. Worth every penny!"</p>
+                <div class="testimonial-author">- Sarah K.</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"The premium badge makes me stand out in the crowd. I've received significantly more matches since upgrading."</p>
+                <div class="testimonial-author">- Mike R.</div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+.premium-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.premium-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.premium-header h1 {
+    color: var(--primary);
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.premium-header i {
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.premium-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary), #667eea);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    color: white;
+}
+
+.feature-card h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+}
+
+.feature-card p {
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+.premium-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.pricing-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 500px;
+    border: 2px solid #FFD700;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.pricing-title {
+    color: #FFD700;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.pricing-price {
+    margin: 20px 0;
+}
+
+.price-amount {
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.price-period {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    display: block;
+    margin-top: 5px;
+}
+
+.pricing-subtitle {
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.pricing-features li {
+    padding: 10px 0;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pricing-features li:last-child {
+    border-bottom: none;
+}
+
+.btn-premium {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    padding: 16px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-premium:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.pricing-note {
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.premium-status {
+    background: rgba(40, 167, 69, 0.1);
+    border: 1px solid rgba(40, 167, 69, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 30px;
+    max-width: 500px;
+}
+
+.status-icon {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.premium-testimonials {
+    margin-top: 60px;
+}
+
+.premium-testimonials h2 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.testimonial-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+}
+
+.testimonial-rating {
+    color: #FFD700;
+    margin-bottom: 15px;
+}
+
+.testimonial-card p {
+    color: var(--text-color);
+    font-style: italic;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.testimonial-author {
+    color: var(--primary);
+    font-weight: bold;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .premium-container {
+        padding: 15px;
+    }
+    
+    .premium-header h1 {
+        font-size: 2rem;
+    }
+    
+    .pricing-card {
+        padding: 25px;
+    }
+    
+    .price-amount {
+        font-size: 2.5rem;
+    }
+}
+</style>
 {% endblock %}
