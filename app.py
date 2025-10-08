@@ -1406,6 +1406,13 @@ def about():
     # В реальной реализации здесь будет логика отображения информации о проекте
     return render_template('about.html')
 
+@app.route('/support_chat')
+@login_required
+def support_chat():
+    # Заглушка для чата поддержки
+    # В реальной реализации здесь будет логика чата с поддержкой
+    return render_template('support_chat.html')
+
 @app.route('/')
 def home():
     return render_template('index.html')
