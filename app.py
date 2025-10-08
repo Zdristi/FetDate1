@@ -71,11 +71,17 @@ if not os.path.exists('static/js'):
 if not os.path.exists('static/uploads'):
     os.makedirs('static/uploads')
 
+from datetime import timedelta
+
+# Configure session permanent
+app.permanent_session_lifetime = timedelta(days=30)  # Сессия будет действовать 30 дней
+
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
+login_manager.session_protection = "strong"
 
 # Site configuration
 SITE_NAME = 'FetDate'
@@ -87,12 +93,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create necessary directories
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-login_manager.login_message = 'Please log in to access this page.'
 
 # Data storage
 DATA_FILE = 'users.json'
