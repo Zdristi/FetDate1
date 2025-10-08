@@ -1492,11 +1492,6 @@ def admin_make_admin(user_id):
     flash(f'Пользователь {user.username} теперь администратор.')
     return redirect(url_for('admin'))
 
-@app.route('/swipe')
-@login_required
-def swipe():
-    return render_template('swipe_fresh.html')
-
 @app.route('/buy_coins')
 @login_required
 def buy_coins():
