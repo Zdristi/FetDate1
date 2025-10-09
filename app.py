@@ -1447,7 +1447,9 @@ def about():
 def support_chat():
     # Заглушка для чата поддержки
     # В реальной реализации здесь будет логика чата с поддержкой
-    return render_template('support_chat.html')
+    from datetime import datetime
+    current_time = datetime.now()
+    return render_template('support_chat.html', current_time=current_time)
 
 @app.route('/admin')
 @login_required

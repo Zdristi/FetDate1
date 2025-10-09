@@ -12,7 +12,7 @@
         <div id="messages">
             <div class="message received">
                 <p>{{ get_text('support_welcome_message') }}</p>
-                <small>Support Team - {{ moment().format('HH:mm') }}</small>
+                <small>Support Team - {{ current_time.strftime('%H:%M') }}</small>
             </div>
         </div>
         
