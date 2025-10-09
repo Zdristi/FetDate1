@@ -328,7 +328,7 @@ function selectTicket(ticketId) {
 }
 
 function closeTicket(ticketId) {
-    if (confirm('{{ get_text('confirm_close_ticket') }}')) {
+    if (confirm(translations.confirmCloseTicket)) {
         fetch(`/admin/close_support_ticket/${ticketId}`, {
             method: 'POST',
             headers: {
@@ -418,5 +418,13 @@ function checkForNewMessages() {
         });
     }
 }
+
+// Переведенные строки для JavaScript
+const translations = {
+    admin: "{{ get_text('admin') }}",
+    closeTicket: "{{ get_text('close_ticket') }}",
+    confirmCloseTicket: "{{ get_text('confirm_close_ticket') }}",
+    supportChatWith: "{{ get_text('support_chat_with') }}"
+};
 </script>
 {% endblock %}
