@@ -48,15 +48,15 @@ cd /home/Project/fetdate
 1. Создайте файл `.env` для хранения секретов:
 ```bash
 cat > .env << EOF
-DB_PASSWORD=your_secure_db_password
-SECRET_KEY=your_very_secure_secret_key_for_production
+DB_PASSWORD=fetdate_password
+SECRET_KEY=your_default_secret_key_for_local_development_please_change_in_production_5a7b9c3d1e2f4a6b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3
 MAIL_SERVER=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USE_TLS=true
 MAIL_USE_SSL=false
-MAIL_USERNAME=your_email@gmail.com
-MAIL_PASSWORD=your_app_password
-MAIL_DEFAULT_SENDER=your_email@gmail.com
+MAIL_USERNAME=sup.fetdate@gmail.com
+MAIL_PASSWORD=cvjorlnpwtvygrcx
+MAIL_DEFAULT_SENDER=sup.fetdate@gmail.com
 EOF
 ```
 

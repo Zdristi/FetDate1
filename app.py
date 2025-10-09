@@ -3,6 +3,10 @@ import sys
 import time
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+# Загружаем переменные окружения из файла .env
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session, send_from_directory
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_sqlalchemy import SQLAlchemy
