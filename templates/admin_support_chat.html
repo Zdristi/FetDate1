@@ -16,7 +16,7 @@
             <div class="ticket-list" id="ticket-list">
                 <!-- Tickets will be loaded dynamically -->
                 {% for ticket in open_tickets %}
-                <div class="ticket-item {% if ticket.id == selected_ticket.id if selected_ticket else '' %}selected{% endif %}" 
+                <div class="ticket-item {% if selected_ticket and ticket.id == selected_ticket.id %}selected{% endif %}" 
                      data-ticket-id="{{ ticket.id }}" onclick="selectTicket({{ ticket.id }})">
                     <div class="ticket-user">
                         <strong>{{ ticket.user.username }}</strong>
