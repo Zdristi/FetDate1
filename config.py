@@ -10,9 +10,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'your_fixed_secret_key_for_local_devel
 
 # Database configuration - changed for local development
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///fetdate_local.db')
+
 # Handle PostgreSQL URL format for SQLAlchemy
 if DATABASE_URL.startswith('postgres://'):
     DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+elif DATABASE_URL.startswith('mysql://'):
+    # MySQL configuration for hosting
+    pass
 
 # SQLAlchemy configuration
 SQLALCHEMY_DATABASE_URI = DATABASE_URL
@@ -37,4 +41,12 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 # Host and Port
 HOST = '0.0.0.0'
 PORT = int(os.environ.get('PORT', 5000))
+
+# For cPanel hosting compatibility
+if 'pythonanywhere' in os.environ.get('HOSTNAME', '') or os.environ.get('CPANEL_HOSTING'):
+    # Configuration for shared hosting like HostIQ.ua
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }
 

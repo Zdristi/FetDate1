@@ -37,4 +37,4 @@ users.json
 instance/
 # Environment files
 .env
-config_local.py
+config_local.py.env 
