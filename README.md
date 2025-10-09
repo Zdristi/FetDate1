@@ -15,6 +15,7 @@ A modern dating website built with Python and Flask, featuring a Tinder-like swi
 - Multi-language support (English and Russian)
 - Dark/light theme toggle
 - Photo upload functionality
+- Email confirmation for registration
 - Moderation system with admin panel
 - User blocking and deletion capabilities
 - Admin user management
@@ -26,21 +27,43 @@ A modern dating website built with Python and Flask, featuring a Tinder-like swi
    pip install -r requirements.txt
    ```
 
-2. Run the application:
+2. Set up environment variables for email (optional but recommended):
+   ```
+   export MAIL_USERNAME=your_email@gmail.com
+   export MAIL_PASSWORD=your_app_password
+   ```
+
+3. Run the application:
    ```
    python app.py
    ```
 
-3. Open your browser and go to http://127.0.0.1:5000
+4. Open your browser and go to http://127.0.0.1:5000
 
 ## Docker Setup
 
 1. Make sure you have Docker and Docker Compose installed
-2. Create a `.env` file with your secrets (see example in DEPLOY_INSTRUCTIONS.md)
+2. Create a `.env` file with your secrets and email settings (see example in DEPLOY_INSTRUCTIONS.md)
 3. Run the application with Docker Compose:
    ```
    docker-compose up -d
    ```
+
+## Email Configuration
+
+The application uses email for user registration confirmation. To configure email:
+
+1. For Gmail:
+   - Enable 2-factor authentication
+   - Generate an "App Password" in your Google Account settings
+   - Use this app password instead of your regular password
+
+2. Set the following environment variables:
+   - `MAIL_USERNAME`: Your email address
+   - `MAIL_PASSWORD`: Your app password (not regular password!)
+   - `MAIL_SERVER`: SMTP server (default: smtp.gmail.com)
+   - `MAIL_PORT`: Port (default: 587)
+   - `MAIL_USE_TLS`: Enable TLS (default: true)
 
 ## How to Use
 

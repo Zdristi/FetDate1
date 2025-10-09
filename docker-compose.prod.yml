@@ -27,6 +27,13 @@ services:
       - DATABASE_URL=postgresql://fetdate_user:${DB_PASSWORD:-fetdate_password}@db:5432/fetdate_db
       - FLASK_ENV=production
       - SECRET_KEY=${SECRET_KEY:-your_default_secret_key_for_local_development_please_change_in_production}
+      - MAIL_SERVER=${MAIL_SERVER:-smtp.gmail.com}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USE_TLS=${MAIL_USE_TLS:-true}
+      - MAIL_USE_SSL=${MAIL_USE_SSL:-false}
+      - MAIL_USERNAME=${MAIL_USERNAME:-sup.fetdate@gmail.com}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_DEFAULT_SENDER=${MAIL_DEFAULT_SENDER:-sup.fetdate@gmail.com}
     depends_on:
       db:
         condition: service_healthy

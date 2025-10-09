@@ -21,6 +21,15 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 # Upload folder
 UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
 
+# Email configuration
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+MAIL_PORT = int(os.environ.get('MAIL_PORT', 587))
+MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ['true', 'on', '1']
+MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ['true', 'on', '1']
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'sup.fetdate@gmail.com')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')  # Пароль приложения Gmail
+MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'sup.fetdate@gmail.com')
+
 # Google OAuth (if you want to use it)
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')

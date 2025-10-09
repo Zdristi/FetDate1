@@ -50,6 +50,13 @@ cd /home/Project/fetdate
 cat > .env << EOF
 DB_PASSWORD=your_secure_db_password
 SECRET_KEY=your_very_secure_secret_key_for_production
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USE_SSL=false
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_app_password
+MAIL_DEFAULT_SENDER=your_email@gmail.com
 EOF
 ```
 
@@ -57,6 +64,17 @@ EOF
 ```bash
 chmod 600 .env
 ```
+
+## Настройка email (важно!)
+
+Приложение использует email для подтверждения регистрации пользователей. Для настройки:
+
+1. Используйте Gmail (или другой SMTP-сервер)
+2. Для Gmail: 
+   - Включите "Двухфакторную аутентификацию"
+   - Создайте "Пароль приложения" в настройках Google аккаунта
+   - Используйте этот пароль приложения в переменной MAIL_PASSWORD
+3. Если используете другой SMTP-сервер, измените соответствующие параметры в .env файле
 
 ## Запуск приложения
 

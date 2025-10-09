@@ -49,12 +49,13 @@ if 'postgresql://' in str(app.config['SQLALCHEMY_DATABASE_URI']):
 db.init_app(app)
 
 # Email configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True').lower() in ['true', 'on', '1']
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False').lower() in ['true', 'on', '1']
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'sup.fetdate@gmail.com')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')  # Пароль приложения Gmail
-app.config['MAIL_DEFAULT_SENDER'] = app.config['MAIL_USERNAME']
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'sup.fetdate@gmail.com')
 
 # Инициализация Flask-Mail
 mail = Mail(app)
@@ -107,10 +108,39 @@ def generate_confirmation_code():
 
 def send_confirmation_email(email, code):
     """Отправляет код подтверждения на email"""
-    # Отправка email отключена для локального запуска
-    # В продакшене необходимо настроить почтовые параметры
-    print(f"Код подтверждения для {email}: {code}")
-    return True
+    try:
+        # Создание сообщения
+        msg = EmailMessage()
+        msg.subject = 'Код подтверждения регистрации'
+        msg.recipients = [email]
+        
+        # Текст письма
+        msg.body = f"""
+        Здравствуйте!
+        
+        Спасибо за регистрацию на нашем сайте FetDate.
+        
+        Ваш код подтверждения: {code}
+        
+        Пожалуйста, введите этот код на странице подтверждения, чтобы завершить регистрацию.
+        
+        Если вы не регистрировались на нашем сайте, просто проигнорируйте это письмо.
+        
+        С уважением,
+        Команда FetDate
+        """
+        
+        # Отправка письма
+        mail.send(msg)
+        print(f"Код подтверждения отправлен на {email}: {code}")
+        return True
+    except Exception as e:
+        # В случае ошибки логируем её и возвращаем False
+        print(f"Ошибка при отправке email на {email}: {str(e)}")
+        # Для отладки и обеспечения работы сайта в случае сбоя почты - 
+        # можно включить резервный вариант вывода кода в консоль
+        print(f"(Резервный вариант) Код подтверждения для {email}: {code}")
+        return False
 
 # User loader for Flask-Login
 @login_manager.user_loader
@@ -1648,17 +1678,16 @@ def register():
                 'user_id': user.id
             }
             
-            # Попытка отправки письма подтверждения (необязательно)
+            # Попытка отправки письма подтверждения
             email_sent = send_confirmation_email(email, confirmation_code)
             if email_sent:
                 # Redirect to verification page
                 flash('Пожалуйста, проверьте вашу почту для подтверждения регистрации.')
                 return redirect(url_for('verify_email_page', email=email))
             else:
-                # Если письмо не отправлено, всё равно продолжаем регистрацию
-                flash('Регистрация прошла успешно. Проверьте ваш email для подтверждения (письмо может прийти с задержкой).')
-                login_user(user)
-                return redirect(url_for('edit_profile'))
+                # Если письмо не отправлено, показываем код пользователю на странице подтверждения
+                flash('Регистрация прошла успешно, но возникли проблемы с отправкой письма. Пожалуйста, используйте код, отображенный на следующей странице.')
+                return redirect(url_for('verify_email_page', email=email, code=confirmation_code))
                 
         except Exception as e:
             db.session.rollback()
@@ -1679,11 +1708,12 @@ def register():
 @app.route('/verify_email')
 def verify_email_page():
     email = request.args.get('email')
+    code = request.args.get('code')  # Код может быть передан как параметр для отладки
     if not email:
         flash('Неверный запрос. Пожалуйста, зарегистрируйтесь снова.')
         return redirect(url_for('register'))
     
-    return render_template('verify_email.html', email=email)
+    return render_template('verify_email.html', email=email, code=code)
 
 @app.route('/verify_email', methods=['POST'])
 def verify_email():
@@ -1739,12 +1769,13 @@ def resend_confirmation():
     }
     
     # Send new confirmation email
-    if send_confirmation_email(email, new_code):
+    email_sent = send_confirmation_email(email, new_code)
+    if email_sent:
         flash('Новый код подтверждения отправлен на ваш email.')
         return redirect(url_for('verify_email_page', email=email))
     else:
-        flash('Ошибка при отправке нового кода. Пожалуйста, попробуйте позже.')
-        return redirect(url_for('verify_email_page', email=email))
+        flash('Ошибка при отправке нового кода. Пожалуйста, используйте код, отображенный ниже.')
+        return redirect(url_for('verify_email_page', email=email, code=new_code))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
