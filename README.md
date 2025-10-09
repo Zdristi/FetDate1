@@ -19,7 +19,7 @@ A modern dating website built with Python and Flask, featuring a Tinder-like swi
 - User blocking and deletion capabilities
 - Admin user management
 
-## Setup
+## Local Setup
 
 1. Install the required dependencies:
    ```
@@ -32,6 +32,15 @@ A modern dating website built with Python and Flask, featuring a Tinder-like swi
    ```
 
 3. Open your browser and go to http://127.0.0.1:5000
+
+## Docker Setup
+
+1. Make sure you have Docker and Docker Compose installed
+2. Create a `.env` file with your secrets (see example in DEPLOY_INSTRUCTIONS.md)
+3. Run the application with Docker Compose:
+   ```
+   docker-compose up -d
+   ```
 
 ## How to Use
 
@@ -127,6 +136,10 @@ To set up the database on Render:
      - Value: Copy the "External Database URL" from your PostgreSQL database
 
 3. The database tables will be created automatically on first run.
+
+## Docker Deployment
+
+Detailed instructions for deploying the application using Docker on a Ubuntu virtual machine are available in [DEPLOY_INSTRUCTIONS.md](DEPLOY_INSTRUCTIONS.md).
 
 ## Stopping the Server
 
