@@ -15,7 +15,7 @@
                         <h2>{{ get_text('support') }}</h2>
                         <p class="recipient-location">
                             <i class="fas fa-circle" style="color: #4CAF50; font-size: 0.6em; margin-right: 5px;"></i>
-                            {{ get_text('support_online') }}
+                            {% if current_user.is_admin %}{{ get_text('admin_support_chat') }}{% else %}{{ get_text('support_online') }}{% endif %}
                         </p>
                     </div>
                 </div>
@@ -23,18 +23,22 @@
         </div>
         
         <div class="chat-messages" id="support-messages">
-            <div class="message received">
-                <div class="message-content">
-                    <p>{{ get_text('support_welcome_message') }}</p>
-                    <div class="message-time">{{ current_time.strftime('%H:%M') }}</div>
+            <!-- Messages will be loaded dynamically -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="message {% if message.is_admin %}received{% else %}sent{% endif %}">
+                    <div class="message-content">
+                        <p>{{ message.content }}</p>
+                        <div class="message-time">{{ message.timestamp.strftime('%H:%M') }} - {{ message.sender_name }}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="message received">
-                <div class="message-content">
-                    <p>{{ get_text('support_auto_response') }}</p>
-                    <div class="message-time">{{ current_time.strftime('%H:%M') }}</div>
+                {% endfor %}
+            {% else %}
+                <div class="welcome-message">
+                    <p>{{ get_text('welcome_to_support_chat') }}</p>
+                    <p>{{ get_text('support_will_respond_soon') }}</p>
                 </div>
-            </div>
+            {% endif %}
         </div>
         
         <div class="chat-input-container">
@@ -137,6 +141,13 @@
     background: var(--bg-color);
 }
 
+.welcome-message {
+    text-align: center;
+    color: var(--gray);
+    margin: auto;
+    padding: 20px;
+}
+
 .message {
     max-width: 70%;
     margin-bottom: 15px;
@@ -177,6 +188,7 @@
     opacity: 0.8;
     margin-top: 5px;
     text-align: right;
+    color: var(--gray);
 }
 
 .message.sent .message-time {
@@ -287,17 +299,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('support-messages');
     
     // Function to add message to chat
-    function addMessageToChat(content, isSent) {
+    function addMessageToChat(content, isSent, senderName, timestamp) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
         
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeString = timestamp ? new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
+            new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
         messageDiv.innerHTML = `
             <div class="message-content">
-                ${content}
-                <div class="message-time">${timeString}</div>
+                <p>${content}</p>
+                <div class="message-time">${timeString} - ${senderName}</div>
             </div>
         `;
         
@@ -312,23 +324,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const content = messageInput.value.trim();
         if (!content) return;
         
-        // Add message to chat
-        addMessageToChat(content, true);
-        
-        // Clear input
-        messageInput.value = '';
-        
-        // Simulate support response after a delay
-        setTimeout(() => {
-            const responses = [
-                "{{ get_text('hello_how_can_i_help') }}",
-                "{{ get_text('thanks_for_your_help') }}",
-                "{{ get_text('sure_ill_help_you_with_that') }}",
-                "{{ get_text('error_sending_message') }}"
-            ];
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            addMessageToChat(randomResponse, false);
-        }, 1000 + Math.random() * 2000);
+        // Send message via AJAX
+        fetch('/api/send_support_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ticket_id: {{ ticket.id }},
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Clear input
+                messageInput.value = '';
+                messageInput.focus();
+            } else {
+                alert('Error sending message: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error sending message');
+        });
     });
     
     // Handle Enter key (without Shift for new line)
@@ -338,6 +358,32 @@ document.addEventListener('DOMContentLoaded', function() {
             sendButton.click();
         }
     });
+    
+    // Poll for new messages every 5 seconds
+    setInterval(checkForNewMessages, 5000);
+    
+    function checkForNewMessages() {
+        fetch(`/api/support_messages/{{ ticket.id }}`)
+        .then(response => response.json())
+        .then(messages => {
+            // Clear current messages except welcome message
+            const currentMessages = document.querySelectorAll('.message');
+            currentMessages.forEach(msg => msg.remove());
+            
+            // Add updated messages
+            messages.forEach(message => {
+                const isSent = message.is_admin ? false : true; // If admin, then user received the message
+                const senderName = message.sender_name;
+                addMessageToChat(message.content, !message.is_admin, senderName, message.timestamp);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error fetching messages:', error);
+        });
+    }
     
     // Scroll to bottom initially
     chatMessages.scrollTop = chatMessages.scrollHeight;

@@ -395,6 +395,13 @@ LANGUAGES = {
         'welcome_to_support_chat': 'Welcome to Support Chat!',
         'support_will_respond_soon': 'Our support team will respond to your messages as soon as possible.',
         'support_welcome_message': 'Hello! Welcome to FetDate support. How can we help you today?',
+        'support_online': 'Support Online',
+        'admin': 'Admin',
+        'close_ticket': 'Close Ticket',
+        'confirm_close_ticket': 'Are you sure you want to close this ticket?',
+        'no_ticket_selected_info': 'Select a ticket from the left panel to view and respond to support requests',
+        'support_chat_with': 'Support Chat with',
+        'select_ticket_to_begin_chat': 'Select a ticket from the list to begin chatting',
         'need_immediate_help': 'Need immediate help?',
         'contact_us_by_email': 'You can also contact us by email:',
         'error_sending_message': 'Error sending message. Please try again.',
@@ -1442,14 +1449,114 @@ def about():
     # В реальной реализации здесь будет логика отображения информации о проекте
     return render_template('about.html')
 
-@app.route('/support_chat')
+@app.route('/support_chat', methods=['GET', 'POST'])
 @login_required
 def support_chat():
-    # Заглушка для чата поддержки
-    # В реальной реализации здесь будет логика чата с поддержкой
     from datetime import datetime
+    
+    # Получаем или создаем тикет поддержки для текущего пользователя
+    ticket = SupportTicket.query.filter_by(user_id=current_user.id, status='open').first()
+    if not ticket:
+        # Создаем новый тикет, если нет открытого
+        ticket = SupportTicket(
+            user_id=current_user.id,
+            subject='Support Request',
+            status='open'
+        )
+        db.session.add(ticket)
+        db.session.commit()
+    
+    # Получаем сообщения для этого тикета
+    messages = SupportMessage.query.filter_by(ticket_id=ticket.id).order_by(SupportMessage.timestamp).all()
+    
+    if request.method == 'POST':
+        content = request.form.get('content')
+        if content:
+            # Создаем новое сообщение в тикете
+            message = SupportMessage(
+                ticket_id=ticket.id,
+                sender_id=current_user.id,
+                content=content,
+                is_admin=False  # Пользователь отправляет сообщение
+            )
+            db.session.add(message)
+            db.session.commit()
+            
+            # Отправляем JSON-ответ для AJAX-запроса
+            return jsonify({
+                'status': 'success',
+                'message': {
+                    'id': message.id,
+                    'content': message.content,
+                    'timestamp': message.timestamp.isoformat(),
+                    'is_admin': False
+                }
+            })
+    
     current_time = datetime.now()
-    return render_template('support_chat.html', current_time=current_time)
+    return render_template('support_chat.html', current_time=current_time, ticket=ticket, messages=messages)
+
+@app.route('/api/support_messages/<int:ticket_id>')
+@login_required
+def api_support_messages(ticket_id):
+    """API endpoint для получения сообщений тикета"""
+    ticket = SupportTicket.query.get_or_404(ticket_id)
+    
+    # Проверяем, что пользователь либо является владельцем тикета, либо администратор
+    if current_user.id != ticket.user_id and not current_user.is_admin:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    messages = SupportMessage.query.filter_by(ticket_id=ticket_id).order_by(SupportMessage.timestamp).all()
+    
+    messages_data = []
+    for message in messages:
+        messages_data.append({
+            'id': message.id,
+            'content': message.content,
+            'timestamp': message.timestamp.isoformat(),
+            'is_admin': message.is_admin,
+            'sender_name': message.sender.username
+        })
+    
+    return jsonify(messages_data)
+
+@app.route('/api/send_support_message', methods=['POST'])
+@login_required
+def api_send_support_message():
+    """API endpoint для отправки сообщений в тикет поддержки"""
+    data = request.get_json()
+    ticket_id = data.get('ticket_id')
+    content = data.get('content')
+    
+    if not ticket_id or not content:
+        return jsonify({'status': 'error', 'error': 'Missing ticket_id or content'}), 400
+    
+    ticket = SupportTicket.query.get_or_404(ticket_id)
+    
+    # Проверяем, что пользователь либо является владельцем тикета, либо администратор
+    if current_user.id != ticket.user_id and not current_user.is_admin:
+        return jsonify({'status': 'error', 'error': 'Access denied'}), 403
+    
+    # Создаем новое сообщение
+    message = SupportMessage(
+        ticket_id=ticket.id,
+        sender_id=current_user.id,
+        content=content,
+        is_admin=current_user.is_admin
+    )
+    db.session.add(message)
+    db.session.commit()
+    
+    return jsonify({
+        'status': 'success',
+        'message': {
+            'id': message.id,
+            'content': message.content,
+            'timestamp': message.timestamp.isoformat(),
+            'is_admin': message.is_admin,
+            'sender_name': current_user.username
+        }
+    })
 
 @app.route('/admin')
 @login_required
@@ -1471,8 +1578,28 @@ def admin_support_chat():
         flash('Доступ запрещен. Требуются права администратора.')
         return redirect(url_for('home'))
     
-    # Заглушка для админ-чата поддержки
-    return render_template('admin_support_chat.html')
+    # Получаем ID тикета из параметров запроса, если он есть
+    ticket_id = request.args.get('ticket_id', type=int)
+    
+    # Получаем все открытые тикеты (и возможно недавно закрытые для истории)
+    open_tickets = SupportTicket.query.filter(
+        (SupportTicket.status == 'open') | (SupportTicket.status == 'closed')
+    ).order_by(SupportTicket.updated_at.desc()).all()
+    
+    # Загружаем сообщения для каждого тикета
+    for ticket in open_tickets:
+        ticket.messages = SupportMessage.query.filter_by(ticket_id=ticket.id).order_by(SupportMessage.timestamp).all()
+    
+    selected_ticket = None
+    if ticket_id:
+        selected_ticket = SupportTicket.query.get(ticket_id)
+        if selected_ticket:
+            # Загружаем сообщения для выбранного тикета
+            selected_ticket.messages = SupportMessage.query.filter_by(ticket_id=ticket_id).order_by(SupportMessage.timestamp).all()
+    
+    return render_template('admin_support_chat.html', 
+                          open_tickets=open_tickets, 
+                          selected_ticket=selected_ticket)
 
 @app.route('/admin/unblock_user/<int:user_id>', methods=['POST'])
 @login_required
@@ -1529,6 +1656,19 @@ def admin_make_admin(user_id):
     db.session.commit()
     flash(f'Пользователь {user.username} теперь администратор.')
     return redirect(url_for('admin'))
+
+@app.route('/admin/close_support_ticket/<int:ticket_id>', methods=['POST'])
+@login_required
+def admin_close_support_ticket(ticket_id):
+    # Проверяем, является ли пользователь администратором
+    if not current_user.is_admin:
+        return jsonify({'status': 'error', 'error': 'Access denied'}), 403
+    
+    ticket = SupportTicket.query.get_or_404(ticket_id)
+    ticket.status = 'closed'
+    db.session.commit()
+    
+    return jsonify({'status': 'success'})
 
 @app.route('/buy_coins')
 @login_required
