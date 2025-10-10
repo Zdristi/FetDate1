@@ -1463,6 +1463,31 @@ def about():
     # В реальной реализации здесь будет логика отображения информации о проекте
     return render_template('about.html')
 
+@app.route('/terms')
+def terms():
+    # Страница условий использования
+    return render_template('terms.html')
+
+@app.route('/refund-policy')
+def refund_policy():
+    # Страница политики возврата
+    return render_template('refund_policy.html')
+
+@app.route('/delivery')
+def delivery():
+    # Страница условий доставки/услуг
+    return render_template('delivery.html')
+
+@app.route('/contacts')
+def contacts():
+    # Страница контактов
+    return render_template('contacts.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    # Страница политики конфиденциальности (добавлена для полноты)
+    return render_template('privacy_policy.html')
+
 @app.route('/support_chat', methods=['GET', 'POST'])
 @login_required
 def support_chat():

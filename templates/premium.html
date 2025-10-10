@@ -73,6 +73,50 @@
         {% endif %}
     </div>
     
+    <!-- Additional information required by payment provider -->
+    <div class="premium-details">
+        <h2>Subscription Details</h2>
+        <div class="details-grid">
+            <div class="detail-card">
+                <h3>Currency</h3>
+                <p>USD</p>
+            </div>
+            <div class="detail-card">
+                <h3>Billing Cycle</h3>
+                <p>Monthly (Automatically renews)</p>
+            </div>
+            <div class="detail-card">
+                <h3>Payment Methods</h3>
+                <p>Credit/Debit Cards, PayPal</p>
+            </div>
+            <div class="detail-card">
+                <h3>Refund Policy</h3>
+                <p>7-day money-back guarantee for new subscriptions</p>
+            </div>
+        </div>
+        
+        <div class="subscription-info">
+            <h3>How It Works</h3>
+            <ol>
+                <li>Click "Get Premium Now" to proceed with payment</li>
+                <li>Enter your payment information securely</li>
+                <li>Your subscription will be activated immediately</li>
+                <li>Enjoy premium features without interruption</li>
+                <li>Subscription renews automatically each month</li>
+                <li>Cancel anytime through your account settings</li>
+            </ol>
+        </div>
+        
+        <div class="payment-security">
+            <h3>Secure Payment</h3>
+            <p>All payment information is processed through secure, encrypted channels. We never store your full credit card details on our servers. Our payment processor is PCI DSS compliant to ensure your financial information is protected.</p>
+        </div>
+        
+        <div class="terms-link">
+            <p>By subscribing to premium service, you agree to our <a href="{{ url_for('terms') }}">Terms of Use</a> and <a href="{{ url_for('refund_policy') }}">Refund Policy</a>.</p>
+        </div>
+    </div>
+    
     <div class="premium-testimonials">
         <h2>Why Users Love Premium</h2>
         <div class="testimonials-grid">
@@ -308,6 +352,111 @@
     font-size: 3rem;
     color: #28a745;
     margin-bottom: 15px;
+}
+
+.premium-details {
+    margin-top: 60px;
+    padding: 30px;
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.premium-details h2 {
+    color: var(--text-color);
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.detail-card {
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.detail-card h3 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.detail-card p {
+    color: var(--text-color);
+    margin: 0;
+}
+
+.subscription-info {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(0, 123, 255, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+.subscription-info h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.subscription-info ol {
+    padding-left: 20px;
+    color: var(--text-color);
+}
+
+.subscription-info li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.payment-security {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(40, 167, 69, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid #28a745;
+}
+
+.payment-security h3 {
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.payment-security p {
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.terms-link {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #ffc107;
+}
+
+.terms-link p {
+    color: var(--text-color);
+    text-align: center;
+    line-height: 1.6;
+}
+
+.terms-link a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.terms-link a:hover {
+    text-decoration: underline;
 }
 
 .premium-testimonials {
