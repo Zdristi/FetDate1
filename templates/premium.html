@@ -48,9 +48,9 @@
                 <li><i class="fas fa-check-circle"></i> {{ get_text('undo_swipes') }}</li>
                 <li><i class="fas fa-check-circle"></i> {{ get_text('unlimited_messaging') }}</li>
                 <li><i class="fas fa-check-circle"></i> {{ get_text('premium_badge') }}</li>
-                <li><i class="fas fa-check-circle"></i> Priority matching</li>
-                <li><i class="fas fa-check-circle"></i> Advanced filters</li>
-                <li><i class="fas fa-check-circle"></i> Extended profile visibility</li>
+                <li><i class="fas fa-check-circle"></i> {{ get_text('priority_matching') or 'Priority matching' }}</li>
+                <li><i class="fas fa-check-circle"></i> {{ get_text('advanced_filters') or 'Advanced filters' }}</li>
+                <li><i class="fas fa-check-circle"></i> {{ get_text('extended_profile_visibility') or 'Extended profile visibility' }}</li>
             </ul>
             
             <button class="btn btn-primary btn-premium">
@@ -75,50 +75,50 @@
     
     <!-- Additional information required by payment provider -->
     <div class="premium-details">
-        <h2>Subscription Details</h2>
+        <h2>{{ get_text('subscription_details') or 'Subscription Details' }}</h2>
         <div class="details-grid">
             <div class="detail-card">
-                <h3>Currency</h3>
+                <h3>{{ get_text('currency') or 'Currency' }}</h3>
                 <p>USD</p>
             </div>
             <div class="detail-card">
-                <h3>Billing Cycle</h3>
-                <p>Monthly (Automatically renews)</p>
+                <h3>{{ get_text('billing_cycle') or 'Billing Cycle' }}</h3>
+                <p>{{ get_text('billing_cycle_desc') or 'Monthly (Automatically renews)' }}</p>
             </div>
             <div class="detail-card">
-                <h3>Payment Methods</h3>
-                <p>Credit/Debit Cards, PayPal</p>
+                <h3>{{ get_text('payment_methods') or 'Payment Methods' }}</h3>
+                <p>{{ get_text('payment_methods_desc') or 'Credit/Debit Cards, PayPal' }}</p>
             </div>
             <div class="detail-card">
-                <h3>Refund Policy</h3>
-                <p>7-day money-back guarantee for new subscriptions</p>
+                <h3>{{ get_text('refund_policy_info') or 'Refund Policy' }}</h3>
+                <p>{{ get_text('refund_policy_desc') or '7-day money-back guarantee for new subscriptions' }}</p>
             </div>
         </div>
         
         <div class="subscription-info">
-            <h3>How It Works</h3>
+            <h3>{{ get_text('how_it_works') or 'How It Works' }}</h3>
             <ol>
-                <li>Click "Get Premium Now" to proceed with payment</li>
-                <li>Enter your payment information securely</li>
-                <li>Your subscription will be activated immediately</li>
-                <li>Enjoy premium features without interruption</li>
-                <li>Subscription renews automatically each month</li>
-                <li>Cancel anytime through your account settings</li>
+                <li>{{ get_text('click_get_premium_now') or 'Click "Get Premium Now" to proceed with payment' }}</li>
+                <li>{{ get_text('enter_payment_info') or 'Enter your payment information securely' }}</li>
+                <li>{{ get_text('subscription_activated') or 'Your subscription will be activated immediately' }}</li>
+                <li>{{ get_text('enjoy_premium_features') or 'Enjoy premium features without interruption' }}</li>
+                <li>{{ get_text('subscription_renews') or 'Subscription renews automatically each month' }}</li>
+                <li>{{ get_text('cancel_anytime_account') or 'Cancel anytime through your account settings' }}</li>
             </ol>
         </div>
         
         <div class="payment-security">
-            <h3>Secure Payment</h3>
-            <p>All payment information is processed through secure, encrypted channels. We never store your full credit card details on our servers. Our payment processor is PCI DSS compliant to ensure your financial information is protected.</p>
+            <h3>{{ get_text('secure_payment') or 'Secure Payment' }}</h3>
+            <p>{{ get_text('secure_payment_desc') or 'All payment information is processed through secure, encrypted channels. We never store your full credit card details on our servers. Our payment processor is PCI DSS compliant to ensure your financial information is protected.' }}</p>
         </div>
         
         <div class="terms-link">
-            <p>By subscribing to premium service, you agree to our <a href="{{ url_for('terms') }}">Terms of Use</a> and <a href="{{ url_for('refund_policy') }}">Refund Policy</a>.</p>
+            <p>{{ get_text('by_subscribing_premium') or 'By subscribing to premium service, you agree to our' }} <a href="{{ url_for('terms') }}">{{ get_text('terms_of_use') or 'Terms of Use' }}</a> {{ get_text('and') or 'and' }} <a href="{{ url_for('refund_policy') }}">{{ get_text('refund_policy') or 'Refund Policy' }}</a>.</p>
         </div>
     </div>
     
     <div class="premium-testimonials">
-        <h2>Why Users Love Premium</h2>
+        <h2>{{ get_text('why_users_love_premium') or 'Why Users Love Premium' }}</h2>
         <div class="testimonials-grid">
             <div class="testimonial-card">
                 <div class="testimonial-rating">
@@ -128,7 +128,7 @@
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
                 </div>
-                <p>"Premium features helped me connect with more people who share my interests. The unlimited messaging is a game-changer!"</p>
+                <p>{{ get_text('testimonial_1') or '"Premium features helped me connect with more people who share my interests. The unlimited messaging is a game-changer!"' }}</p>
                 <div class="testimonial-author">- Alex M.</div>
             </div>
             
@@ -140,7 +140,7 @@
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
                 </div>
-                <p>"The ability to undo swipes has saved me from accidentally passing on potential matches. Worth every penny!"</p>
+                <p>{{ get_text('testimonial_2') or '"The ability to undo swipes has saved me from accidentally passing on potential matches. Worth every penny!"' }}</p>
                 <div class="testimonial-author">- Sarah K.</div>
             </div>
             
@@ -152,7 +152,7 @@
                     <i class="fas fa-star"></i>
                     <i class="fas fa-star"></i>
                 </div>
-                <p>"The premium badge makes me stand out in the crowd. I've received significantly more matches since upgrading."</p>
+                <p>{{ get_text('testimonial_3') or '"The premium badge makes me stand out in the crowd. I\'ve received significantly more matches since upgrading."' }}</p>
                 <div class="testimonial-author">- Mike R.</div>
             </div>
         </div>
