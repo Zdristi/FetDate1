@@ -147,11 +147,7 @@
                         <div class="faq-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: var(--card-bg); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px;">
                             <a href="{{ url_for('about') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('about_us') or 'About Us' }}</a>
                             <a href="{{ url_for('faq') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('faq') or 'FAQ' }}</a>
-                            <a href="{{ url_for('terms') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">Terms of Use</a>
-                            <a href="{{ url_for('privacy_policy') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">Privacy Policy</a>
-                            <a href="{{ url_for('refund_policy') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">Refund Policy</a>
-                            <a href="{{ url_for('delivery') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">Terms of Service</a>
-                            <a href="{{ url_for('contacts') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none;">{{ get_text('support') or 'Support' }}</a>
+                            <a href="{{ url_for('support_chat') }}" style="display: block; padding: 10px 15px; color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--border-color);">{{ get_text('support') or 'Support' }}</a>
                         </div>
                     </div>
 
@@ -1080,11 +1076,11 @@
         <div class="footer-content">
             <p>&copy; 2025 FetDate. All rights reserved.</p>
             <ul class="footer-links">
-                <li><a href="{{ url_for('terms') }}">Terms of Use</a></li>
-                <li><a href="{{ url_for('privacy_policy') }}">Privacy Policy</a></li>
-                <li><a href="{{ url_for('refund_policy') }}">Refund Policy</a></li>
-                <li><a href="{{ url_for('delivery') }}">Terms of Service</a></li>
-                <li><a href="{{ url_for('contacts') }}">Contact</a></li>
+                <li><a href="{{ url_for('terms') }}">{{ get_text('terms_of_use') or 'Terms of Use' }}</a></li>
+                <li><a href="{{ url_for('privacy_policy') }}">{{ get_text('privacy_policy') or 'Privacy Policy' }}</a></li>
+                <li><a href="{{ url_for('refund_policy') }}">{{ get_text('refund_policy') or 'Refund Policy' }}</a></li>
+                <li><a href="{{ url_for('delivery') }}">{{ get_text('terms_of_service') or 'Terms of Service' }}</a></li>
+                <li><a href="{{ url_for('contacts') }}">{{ get_text('contacts') or 'Contacts' }}</a></li>
             </ul>
         </div>
     </footer>
